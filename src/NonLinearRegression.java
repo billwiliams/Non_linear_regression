@@ -47,8 +47,10 @@ public class NonLinearRegression {
                }
 
         csvReader.close();
+        //for verification of obtained variables
         for (int i=0;i<content.size();i++) {
-            System.out.println(Y_m[i]);
+            System.out.println(Bearing_degs[i]);
+
 
         }
     }
