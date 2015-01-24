@@ -55,10 +55,6 @@ public class NonLinearRegression {
         Yo = MathematicalComputations.ConvertCourseY_m(Course_degs, Speed);
 
         ScatterPlot.ScatterCreate(Xo,Yo);
-        System.out.println(MathematicalComputations.EstimateGausianMean(Bearing_degs));
-        System.out.println(MathematicalComputations.EstimateGausianVariance(Bearing_degs));
-
-
 
     }
     }
