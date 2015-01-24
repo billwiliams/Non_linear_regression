@@ -1,16 +1,11 @@
-import org.apache.commons.math3.analysis.function.Add;
-import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.LUDecomposition;
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.analysis.function.Inverse;
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.NotPositiveException;
+import org.apache.commons.math3.exception.OutOfRangeException;
+import org.apache.commons.math3.fitting.leastsquares.GaussNewtonOptimizer;
+import org.apache.commons.math3.linear.*;
 import org.apache.commons.math3.stat.StatUtils;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.stat.descriptive.moment.Mean;
-import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.apache.commons.math3.util.FastMath;
-import org.apache.commons.math3.util.Precision;
-
 import java.lang.reflect.Array;
 
 /**
@@ -114,5 +109,28 @@ public class MathematicalComputations {
 
         return StatUtils.variance(Bearings);
     }
+    /*
+    *This method returns the probabilitites associated with the given feature
+     */
+public static double[] MultivariateGaussian(double[] features,double mu,double sigma){
+    double[] x=new double[features.length];
+    double[] sum=new double[features.length];
+    double[] bxsfuntimes=new double[features.length];
 
+    double y,exp;
+    y=FastMath.pow(2*FastMath.PI,-0.5)*FastMath.pow(sigma,-0.5);
+    for(int counter=0;counter< features.length;counter++){
+        x[counter]=features[counter]-mu;
+        sum[counter]=features[counter]* new Inverse().value(sigma);
+
+    }
+    for(int counter=0;counter< features.length;counter++){
+        bxsfuntimes[counter]=FastMath.exp(-0.5*(x[counter]*sum[counter]+2))*y ;
+
+
+    }
+
+
+    return bxsfuntimes;
+}
 }
