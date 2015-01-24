@@ -53,10 +53,11 @@ public class NonLinearRegression {
         //obtaining the values of Yo' and Xo'
         Xo = MathematicalComputations.ConvertCourseX_m(Course_degs, Speed);
         Yo = MathematicalComputations.ConvertCourseY_m(Course_degs, Speed);
-        SquaredErrors=MathematicalComputations.LeastSquares(Yo,Xo);
-       for (counter=0; counter < content.size(); counter++) {
-            System.out.println(SquaredErrors);
-        }
+
+        ScatterPlot.ScatterCreate(Xo,Yo);
+        System.out.println(MathematicalComputations.EstimateGausianMean(Bearing_degs));
+        System.out.println(MathematicalComputations.EstimateGausianVariance(Bearing_degs));
+
 
 
     }
