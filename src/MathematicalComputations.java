@@ -88,16 +88,7 @@ public class MathematicalComputations {
         return SquaredErrors.getNorm();
     }
 
-    /*
-    * This method is used to calculate the mean of every feature in the dataset
-    * It returns an array of means of every feature
-    *
-     */
-    public static double EstimateGausianMean(double Bearings[]) {
-
-
-        return StatUtils.mean(Bearings);
-    }
+   
 
     /*
     * This method is used to calculate the variance of every feature in the dataset
@@ -109,28 +100,5 @@ public class MathematicalComputations {
 
         return StatUtils.variance(Bearings);
     }
-    /*
-    *This method returns the probabilitites associated with the given feature
-     */
-public static double[] MultivariateGaussian(double[] features,double mu,double sigma){
-    double[] x=new double[features.length];
-    double[] sum=new double[features.length];
-    double[] bxsfuntimes=new double[features.length];
 
-    double y,exp;
-    y=FastMath.pow(2*FastMath.PI,-0.5)*FastMath.pow(sigma,-0.5);
-    for(int counter=0;counter< features.length;counter++){
-        x[counter]=features[counter]-mu;
-        sum[counter]=features[counter]* new Inverse().value(sigma);
-
-    }
-    for(int counter=0;counter< features.length;counter++){
-        bxsfuntimes[counter]=FastMath.exp(-0.5*(x[counter]*sum[counter]+2))*y ;
-
-
-    }
-
-
-    return bxsfuntimes;
-}
 }
