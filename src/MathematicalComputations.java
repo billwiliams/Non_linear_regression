@@ -1,7 +1,14 @@
 
+
+import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
+
 import org.apache.commons.math3.linear.*;
 
+import org.apache.commons.math3.optimization.fitting.CurveFitter;
+import org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizer;
 import org.apache.commons.math3.util.FastMath;
+
+import java.util.Collection;
 
 
 /**
@@ -26,6 +33,26 @@ public class MathematicalComputations {
         //returns the double sum of the values in the matrix. This is the sum of the squared errors
         return SquaredErrors.getNorm();
     }
+  public static ParametricUnivariateFunction function=new ParametricUnivariateFunction() {
+       @Override
+       public double value(double v, double... doubles) {
+           double B= doubles[0];
+           double P= doubles[2];
+           double Q= doubles[1];
+           return  FastMath.toDegrees(FastMath.atan2(FastMath.sin(FastMath.toRadians(B))+P*v,FastMath.sin(FastMath.toRadians(B))+Q*v));
+       }
+
+       @Override
+       public double[] gradient(double v, double... doubles) {
+           double B= doubles[0];
+           double P= doubles[2];
+           double Q= doubles[1];
+           return new double[]{
+                 FastMath.toDegrees(FastMath.atan2(FastMath.sin(FastMath.toRadians(B))+P*v,FastMath.sin(FastMath.toRadians(B))+Q*v))
+           };
+       }
+   };
+
 
 
 
