@@ -8,6 +8,7 @@ import org.apache.commons.math3.optimization.fitting.CurveFitter;
 import org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizer;
 import org.apache.commons.math3.util.FastMath;
 
+
 import java.util.Collection;
 
 
@@ -39,18 +40,24 @@ public class MathematicalComputations {
            double B= doubles[0];
            double P=doubles[1];
            double Q= doubles[2];
-           return  FastMath.toDegrees(FastMath.atan2(FastMath.sin(FastMath.toRadians(B))+P*v,FastMath.sin(FastMath.toRadians(B))+Q*v));
+           return Math.toDegrees(Math.atan2(Math.sin(Math.toRadians(B))+P*v,Math.cos(Math.toRadians(B))+Q*v));
        }
 
+      /**
+       * This Method is used to compute the gradient of the jacobian matrix above, it does so by returning the partial derivatives of the
+       * function above. 1.e partial derivative of the arctan formula  with respect to B,P and Q
+       *
+       */
        @Override
        public double[] gradient(double v, double... doubles) {
-           double B= doubles[0];
-double P=doubles[1];
-           double Q= doubles[2];
-           return new double[]{
-                   ( (FastMath.sin(B)*(P*v +FastMath.sin(B)))/(Q*v +FastMath.pow(FastMath.cos(B),2))+FastMath.cos(B)/(Q*v + FastMath.cos(B)))/((P*v +FastMath.pow(FastMath.sin(B),2))/(Q*v +FastMath.pow(FastMath.cos(B),2))+1),
-                   v/((Q*v+FastMath.cos(B))*((P*v +FastMath.pow(FastMath.sin(B),2))/(Q*v +FastMath.pow(FastMath.cos(B),2))+1)),
-                   (v*(P*v +FastMath.sin(B)))/((Q*v+FastMath.pow(FastMath.cos(B),2))*((P*v +FastMath.pow(FastMath.sin(B),2))/(Q*v +FastMath.pow(FastMath.cos(B),2))+1))
+            double B= doubles[0];
+           double P= doubles[1];
+            double Q=doubles[2];
+
+            return new double[]{
+                    (( Math.cos(Math.toRadians(B))*(Math.cos(Math.toRadians(B))+Q*v))-(Math.sin(Math.toRadians(B))*((-Math.sin(Math.toRadians(B)))-P*v)))/(Math.pow((Math.sin(Math.toRadians(B))+P*v),2)+Math.pow((Math.cos(Math.toRadians(B))+Q*v),2)),
+                    (( v*(Math.cos(Math.toRadians(B))+Q*v))/(Math.pow((Math.sin(Math.toRadians(B))+P*v),2)+Math.pow((Math.cos(Math.toRadians(B))+Q*v),2))),
+                    (( v*(-Math.sin(Math.toRadians(B))-P*v))/(Math.pow((Math.sin(Math.toRadians(B))+P*v),2)+Math.pow((Math.cos(Math.toRadians(B))+Q*v),2)))
            };
        }
    };

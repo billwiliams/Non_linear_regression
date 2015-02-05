@@ -6,7 +6,12 @@
 import au.com.bytecode.opencsv.CSVReader;
 
 
-
+import org.apache.commons.math3.fitting.AbstractCurveFitter;
+import org.apache.commons.math3.fitting.WeightedObservedPoint;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
+import org.apache.commons.math3.linear.DiagonalMatrix;
+import org.apache.commons.math3.optimization.direct.PowellOptimizer;
 import org.apache.commons.math3.optimization.fitting.CurveFitter;
 import org.apache.commons.math3.optimization.fitting.PolynomialFitter;
 import org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizer;
@@ -18,6 +23,9 @@ import org.joda.time.format.DateTimeFormatter;
 
 
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -72,16 +80,58 @@ public class NonLinearRegression {
         }
 
 
-        LevenbergMarquardtOptimizer optimizer=new LevenbergMarquardtOptimizer();
-        CurveFitter fitter= new CurveFitter(optimizer);
-        for (int i = 0; i < TimeElapsed.length; i++) {
-            fitter.addObservedPoint(TimeElapsed[i],Bearing_degs[i]);
-        }
-        //double[] result = fitter.fit(MathematicalComputations.function, new double[] { 0.9, 0.8,0.4 });
-double[] initial={0,0,0};
-double[] result=fitter.fit(MathematicalComputations.function,initial);
-System.out.println(result[2]);
+        AbstractCurveFitter fitter=new AbstractCurveFitter() {
+            @Override
+            protected LeastSquaresProblem getProblem(Collection<WeightedObservedPoint> points) {
+                final int len = points.size();
+                final double[] target  = new double[len];
+                final double[] weights = new double[len];
+                final double[] initialGuess = { 1.0, 1.0,1.0 };
 
+                int i = 0;
+                for(WeightedObservedPoint point : points) {
+                    target[i]  = point.getY();
+                    weights[i] = point.getWeight();
+                    i += 1;
+                }
+                TheoreticalValuesFunction model= new TheoreticalValuesFunction(MathematicalComputations.function,points);
+
+                return new LeastSquaresBuilder().
+                        maxEvaluations(Integer.MAX_VALUE).
+                        maxIterations(Integer.MAX_VALUE).
+                        start(initialGuess).
+                        target(target).
+                        weight(new DiagonalMatrix(weights)).
+                        model(model.getModelFunction(), model.getModelFunctionJacobian()).
+                        build();
+            }
+
+
+
+        };
+        ArrayList<WeightedObservedPoint> points = new ArrayList<WeightedObservedPoint>();
+
+        // Add points here; for instance,
+
+        for (int i = 0; i < TimeElapsed.length; i++) {
+            WeightedObservedPoint point = new WeightedObservedPoint(1.0,TimeElapsed[i],Bearing_degs[i]);
+            points.add(point);
+        }
+
+
+double[] result=fitter.fit(points);
+        double[] Y_fit=new double[TimeElapsed.length];
+System.out.println(Arrays.toString(result));
+      for (int i=0;i<TimeElapsed.length;i++){
+         Y_fit[i]=MathematicalComputations.function.value(TimeElapsed[i],result) ;
+      }
+        System.out.println((Arrays.toString(Y_fit)));
+
+
+ScatterPlot.ScatterCreate(TimeElapsed, Y_fit);
+        //ScatterPlot.ScatterCreate(TimeElapsed,Bearing_degs);
     }
+
+
 }
 
