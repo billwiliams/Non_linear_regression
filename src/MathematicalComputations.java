@@ -37,18 +37,20 @@ public class MathematicalComputations {
        @Override
        public double value(double v, double... doubles) {
            double B= doubles[0];
-           double P= doubles[2];
-           double Q= doubles[1];
+           double P=doubles[1];
+           double Q= doubles[2];
            return  FastMath.toDegrees(FastMath.atan2(FastMath.sin(FastMath.toRadians(B))+P*v,FastMath.sin(FastMath.toRadians(B))+Q*v));
        }
 
        @Override
        public double[] gradient(double v, double... doubles) {
            double B= doubles[0];
-           double P= doubles[2];
-           double Q= doubles[1];
+double P=doubles[1];
+           double Q= doubles[2];
            return new double[]{
-                 FastMath.toDegrees(FastMath.atan2(FastMath.sin(FastMath.toRadians(B))+P*v,FastMath.sin(FastMath.toRadians(B))+Q*v))
+                   ( (FastMath.sin(B)*(P*v +FastMath.sin(B)))/(Q*v +FastMath.pow(FastMath.cos(B),2))+FastMath.cos(B)/(Q*v + FastMath.cos(B)))/((P*v +FastMath.pow(FastMath.sin(B),2))/(Q*v +FastMath.pow(FastMath.cos(B),2))+1),
+                   v/((Q*v+FastMath.cos(B))*((P*v +FastMath.pow(FastMath.sin(B),2))/(Q*v +FastMath.pow(FastMath.cos(B),2))+1)),
+                   (v*(P*v +FastMath.sin(B)))/((Q*v+FastMath.pow(FastMath.cos(B),2))*((P*v +FastMath.pow(FastMath.sin(B),2))/(Q*v +FastMath.pow(FastMath.cos(B),2))+1))
            };
        }
    };
