@@ -4,18 +4,17 @@
  * Modules such as apache commons maths libraries and Jfreechart are used for analysis and visualization
  */
 import java.io.FileReader;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.optim.InitialGuess;
 import org.apache.commons.math3.optim.MaxEval;
-import org.apache.commons.math3.optim.OptimizationData;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
-import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.MultiDirectionalSimplex;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import org.apache.commons.math3.optim.univariate.BrentOptimizer;
@@ -24,16 +23,13 @@ import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;
 import org.apache.commons.math3.optim.univariate.UnivariateOptimizer;
 import org.apache.commons.math3.optim.univariate.UnivariatePointValuePair;
 import org.joda.time.DateTime;
-import org.joda.time.Seconds;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-@SuppressWarnings("deprecation")
 public class Ian_trial {
 
-	@SuppressWarnings("rawtypes")
 	public static void main(String[] args) throws Exception {
 		/* Reading a csv file to obtain data for analysis */
 
@@ -43,7 +39,7 @@ public class Ian_trial {
 		// headings the result is stored in a list
 		CSVReader csvReader = new CSVReader(new FileReader(csvFilename), ',',
 				'\'', 1);
-		final List content = csvReader.readAll();
+		final List<String[]> content = csvReader.readAll();
 		// variable to hold each row of the List while iterating through it
 		String[] row = null;
 		// counter used to populate the variables with data from the csv file
@@ -57,7 +53,6 @@ public class Ian_trial {
 		final Double bearings[] = new Double[content.size()];
 		org.joda.time.DateTime date[] = new DateTime[content.size()];
 		final Double elapsedTimes[] = new Double[content.size()];
-		double SquaredErrors;
 
 		for (Object object : content) {
 			row = (String[]) object;
@@ -78,25 +73,144 @@ public class Ian_trial {
 		 */
 		DateTimeFormatter formatter = DateTimeFormat
 				.forPattern("dd/MM/yyyy HH:mm:ss");
+		long firstDate = 0;
 		for (int i = 0; i < content.size(); i++) {
-
+			// take a copy of the data - it will be useful later on
 			date[i] = formatter.parseDateTime(DateTime[i]);
-			Seconds diff = Seconds.secondsBetween(date[0], date[i]);
-			elapsedTimes[i] = Double.valueOf(diff.getSeconds()) / 10000;
+			
+			// is this the first row?
+			if(i==0)
+			{
+				// ok, first time - store it;
+				firstDate = date[i].getMillis();
+			}			
+			elapsedTimes[i] = (date[i].getMillis() - firstDate) / 1000d;
+		}
+		
+		// Now, we have to slice the data into ownship legs
+		List<LegOfData> ownshipLegs = calculateLegs(Course_degs, Speed, bearings, elapsedTimes);
+		
+		// ok, work through the legs
+		for (Iterator<LegOfData> iterator = ownshipLegs.iterator(); iterator.hasNext();) {
+			
+			LegOfData legOfData = (LegOfData) iterator.next();
+			
+			// ok, declare the function that will experiment with different leg slices
+			UnivariateFunction g = new LegSplitter(legOfData.times(), legOfData.bearings()); 
+	        		
+	        UnivariateOptimizer optimizerMult = new BrentOptimizer(1e-3, 1e-6); 
+	        UnivariatePointValuePair solutionMult = optimizerMult.optimize(         		
+	        		GoalType.MINIMIZE,
+	        		new UnivariateObjectiveFunction(g),
+	        		new SearchInterval(0, elapsedTimes.length)); 
+
+	        double optimalIndex = solutionMult.getValue();
+	      
+	        // ok, let's slice this leg of data in to the two target legs
+	        int index = (int) optimalIndex;
+	        
+	        System.out.println("slicing leg:" + legOfData.getName() + " at " + index); 
+			
 		}
 
-		// ok, declare the function that will experiment with different leg slices
-		UnivariateFunction g = new LegSplitter(elapsedTimes , bearings); 
-        		
-        UnivariateOptimizer optimizerMult = new BrentOptimizer(1e-3, 1e-6); 
-        UnivariatePointValuePair solutionMult = optimizerMult.optimize(         		
-        		GoalType.MINIMIZE,
-        		new UnivariateObjectiveFunction(g),
-        		new SearchInterval(0, elapsedTimes.length)); 
-
-        System.out.println(solutionMult.getValue()); 
 	}
 
+	/** slice this data into ownship legs, where the course and speed are relatively steady
+	 * 
+	 * @param course_degs
+	 * @param speed
+	 * @param bearings
+	 * @param elapsedTimes
+	 * @return
+	 */
+	private static List<LegOfData> calculateLegs(double[] course_degs,
+			double[] speed, Double[] bearings, Double[] elapsedTimes) {
+		
+		final double COURSE_TOLERANCE = 0.1;   // degs / sec (just a guess!!)
+		final double SPEED_TOLERANCE = 2;   // knots / sec  (just a guess!!)
+		
+		double lastCourse = 0;
+		double lastSpeed = 0;
+		double lastTime = 0;
+		
+		List<LegOfData> legs = new ArrayList<LegOfData>();
+		legs.add(new LegOfData("Ownship Leg 0"));
+		
+		for (int i = 0; i < elapsedTimes.length; i++) {
+			Double thisTime = elapsedTimes[i];
+			
+			double thisSpeed = speed[i];
+			double thisCourse = course_degs[i];
+			
+			if(i > 0)
+			{
+				// ok, check out the course change rate
+				double timeStep = thisTime - lastTime;
+				double courseRate = Math.abs(thisCourse - lastCourse) / timeStep; 
+				double speedRate = Math.abs(thisSpeed - lastSpeed) / timeStep;
+				
+				// are they out of range
+				if((courseRate < COURSE_TOLERANCE) && (speedRate < SPEED_TOLERANCE))
+				{
+					// ok, we're on a new leg - drop the current one
+					legs.get(legs.size()-1).add(thisTime, bearings[i]);
+				}
+				else
+				{
+					// we may be in a turn. create a new leg, if we haven't done so already
+					if(legs.get(legs.size()-1).size() != 0)
+					{
+						legs.add(new LegOfData("Ownship Leg " + legs.size()));
+					}
+				}
+			}
+			
+			// ok, store the values
+			lastTime = thisTime;
+			lastCourse = thisCourse;
+			lastSpeed = thisSpeed;
+			
+		}
+		
+		return legs;
+	}
+
+	/** class to store a leg of ownship data
+	 * 
+	 * @author ian
+	 *
+	 */
+	private static class LegOfData
+	{
+		final List<Double> _times = new ArrayList<Double>();
+		final List<Double> _bearings = new ArrayList<Double>();
+		final private String _myName;
+		
+		public LegOfData(final String name)
+		{
+			_myName = name;
+		}
+		public String getName() {
+			return _myName;
+		}
+		public List<Double> bearings() {
+			return _bearings;
+		}
+		public List<Double> times() {
+			return _times;
+		}
+		public void add(double time, double bearing)
+		{
+			_times.add(time);
+			_bearings.add(bearing);
+		}
+		public int size()
+		{
+			return _times.size();
+		}
+		
+	}
+	
 	/** function to generate sum of squares of errors for a single permutation of B,P,Q
 	 * 
 	 */
@@ -144,16 +258,15 @@ public class Ian_trial {
 	 */
 	private static class LegSplitter implements UnivariateFunction
 	{
-		final private Double[] _times;
-		final private Double[] _bearings;
+		final private List<Double> _times;
+		final private List<Double> _bearings;
 
 
-		public LegSplitter(Double[] times, Double[] bearings)
+		public LegSplitter(List<Double> times, List<Double> bearings)
 		{
 			_times = times;
 			_bearings = bearings;
 		}
-		
 
 		@Override
 		public double value(double x) {
@@ -162,22 +275,21 @@ public class Ian_trial {
 			int index = (int)x;
 			
 			// check it's valid
-			if((index <= 0) || (index >= _times.length))
+			if((index <= 0) || (index >= _times.size()))
 			{
 				// ok, invalid - move along
 				return Double.MAX_VALUE;
 			}
 			
 			// use this to make the two slices
+			
 			// first the times
-			List<Double> safeTimes = Arrays.asList(_times);
-			List<Double> beforeTimes = safeTimes.subList(0, index);
-			List<Double> afterTimes = safeTimes.subList(index, _times.length-1);
+			List<Double> beforeTimes = _times.subList(0, index);
+			List<Double> afterTimes = _times.subList(index, _times.size()-1);
 			
 			// now the bearings
-			List<Double> safeBearings = Arrays.asList(_bearings);
-			List<Double> beforeBearings = safeBearings.subList(0, index);
-			List<Double> afterBearings = safeBearings.subList(index, _bearings.length-1);
+			List<Double> beforeBearings = _bearings.subList(0, index);
+			List<Double> afterBearings = _bearings.subList(index, _bearings.size()-1);
 			
 			
 	        MultivariateFunction beforeF = new ArcTanSolver(beforeTimes, beforeBearings); 
