@@ -93,10 +93,12 @@ public class Ian_trial {
 		// ok, work through the legs
 		for (Iterator<LegOfData> iterator = ownshipLegs.iterator(); iterator.hasNext();) {
 			
-			LegOfData legOfData = (LegOfData) iterator.next();
+			LegOfData thisLeg = (LegOfData) iterator.next();
+			
+			System.out.println("handling leg:" + thisLeg);
 			
 			// ok, declare the function that will experiment with different leg slices
-			UnivariateFunction g = new LegSplitter(legOfData.times(), legOfData.bearings()); 
+			UnivariateFunction g = new LegSplitter(thisLeg.times(), thisLeg.bearings()); 
 	        		
 	        UnivariateOptimizer optimizerMult = new BrentOptimizer(1e-3, 1e-6); 
 	        UnivariatePointValuePair solutionMult = optimizerMult.optimize(         		
@@ -109,7 +111,7 @@ public class Ian_trial {
 	        // ok, let's slice this leg of data in to the two target legs
 	        int index = (int) optimalIndex;
 	        
-	        System.out.println("slicing leg:" + legOfData.getName() + " at " + index); 
+	        System.out.println("slicing leg:" + thisLeg.getName() + " at " + index); 
 			
 		}
 
@@ -208,6 +210,11 @@ public class Ian_trial {
 		{
 			return _times.size();
 		}
+		@Override
+		public String toString()
+		{
+			return getName() + " " + _times.get(0) + "-" + _times.get(_times.size()-1);
+		}
 		
 	}
 	
@@ -283,9 +290,11 @@ public class Ian_trial {
 			
 			// use this to make the two slices
 			
+			final int BUFFER_REGION = 4; // the number of measurements to ignore whilst the target is turning 
+			
 			// first the times
-			List<Double> beforeTimes = _times.subList(0, index);
-			List<Double> afterTimes = _times.subList(index, _times.size()-1);
+			List<Double> beforeTimes = _times.subList(0, index - BUFFER_REGION / 2);
+			List<Double> afterTimes = _times.subList(index + BUFFER_REGION / 2, _times.size()-1);
 			
 			// now the bearings
 			List<Double> beforeBearings = _bearings.subList(0, index);
