@@ -38,7 +38,7 @@ public class NonLinearRegression {
 
 
         //Filename containing the data
-        String csvFilename = "D:\\projects\\Non_linear_regression\\ArcTan\\ArcTan_Data.csv";
+        String csvFilename = "data/ArcTan_Data.csv";
         //Reading the csv file but ignoring the first column since it contains headings the result is stored in a list
         CSVReader csvReader = new CSVReader(new FileReader(csvFilename), ',', '\'', 1);
         final List content = csvReader.readAll();
