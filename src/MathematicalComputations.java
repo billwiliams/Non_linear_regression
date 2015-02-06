@@ -36,11 +36,11 @@ public class MathematicalComputations {
     }
   public static ParametricUnivariateFunction function=new ParametricUnivariateFunction() {
        @Override
-       public double value(double v, double... doubles) {
+       public double value(double elapsedSecs, double... doubles) {
            double B= doubles[0];
            double P=doubles[1];
            double Q= doubles[2];
-           return Math.toDegrees(Math.atan2(Math.sin(Math.toRadians(B))+P*v,Math.cos(Math.toRadians(B))+Q*v));
+           return Math.toDegrees(Math.atan2(Math.sin(Math.toRadians(B))+P*elapsedSecs,Math.cos(Math.toRadians(B))+Q*elapsedSecs));
        }
 
       /**
