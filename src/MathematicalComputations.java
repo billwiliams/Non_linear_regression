@@ -2,6 +2,8 @@
 
 import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
 
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.function.Gaussian;
 import org.apache.commons.math3.linear.*;
 
 import org.apache.commons.math3.optimization.fitting.CurveFitter;
@@ -35,29 +37,39 @@ public class MathematicalComputations {
         return SquaredErrors.getNorm();
     }
   public static ParametricUnivariateFunction function=new ParametricUnivariateFunction() {
+      /*
+      * This is our Arctan formula which we will use to fit a curve to our measured data
+      * It returns the value of Bi (bearing ) in degrees
+      * B,P and Q are our fitting parameters which are unknown and are to be computed using the Levernberg Marquardt optimizer since it's
+      * a least squares problem
+      * */
        @Override
        public double value(double v, double... doubles) {
-           double B= doubles[0];
+           double B=Math.toRadians( doubles[0]);
            double P=doubles[1];
            double Q= doubles[2];
-           return Math.toDegrees(Math.atan2(Math.sin(Math.toRadians(B))+P*v,Math.cos(Math.toRadians(B))+Q*v));
+           return Math.toDegrees(Math.atan2(Math.sin((B))+P*v,Math.cos((B))+Q*v));
        }
 
       /**
        * This Method is used to compute the gradient of the jacobian matrix above, it does so by returning the partial derivatives of the
        * function above. 1.e partial derivative of the arctan formula  with respect to B,P and Q
-       *
+       * this method returns the fitting parameters for the above method which contains the formula for fitting our curve
+       * It takes the unknown variables B,P and Q and uses the partial derivatives of the arctan formula to compute the gradient hence the fitting parameters
        */
        @Override
        public double[] gradient(double v, double... doubles) {
-            double B= doubles[0];
+            double B= Math.toRadians(doubles[0]);
            double P= doubles[1];
             double Q=doubles[2];
 
             return new double[]{
-                    (( Math.cos(Math.toRadians(B))*(Math.cos(Math.toRadians(B))+Q*v))-(Math.sin(Math.toRadians(B))*((-Math.sin(Math.toRadians(B)))-P*v)))/(Math.pow((Math.sin(Math.toRadians(B))+P*v),2)+Math.pow((Math.cos(Math.toRadians(B))+Q*v),2)),
-                    (( v*(Math.cos(Math.toRadians(B))+Q*v))/(Math.pow((Math.sin(Math.toRadians(B))+P*v),2)+Math.pow((Math.cos(Math.toRadians(B))+Q*v),2))),
-                    (( v*(-Math.sin(Math.toRadians(B))-P*v))/(Math.pow((Math.sin(Math.toRadians(B))+P*v),2)+Math.pow((Math.cos(Math.toRadians(B))+Q*v),2)))
+                    //partial derivative of arctan formula with respect to B i.e d/dB
+                    ( -(-P*v-Math.sin(B) )*Math.sin(B)/(Math.pow((Math.sin((B))+P*v),2)+Math.pow((Math.cos((B))+Q*v),2)))+((Q*v + Math.cos(B))*Math.cos(B)/(Math.pow((Math.sin((B))+P*v),2)+Math.pow((Math.cos((B))+Q*v),2))),
+                    //partial derivative of arctan formula with respect to P i.e d/dP
+                    (( v*(Math.cos((B))+Q*v))/(Math.pow((Math.sin((B))+P*v),2)+Math.pow((Math.cos((B))+Q*v),2))),
+                    //partial derivative of arctan formula with respect to Q i.e d/dQ
+                    (( v*(-P*v-Math.sin((B))))/(Math.pow((Math.sin((B))+P*v),2)+Math.pow((Math.cos((B))+Q*v),2)))
            };
        }
    };

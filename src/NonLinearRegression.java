@@ -6,16 +6,14 @@
 import au.com.bytecode.opencsv.CSVReader;
 
 
+
 import org.apache.commons.math3.fitting.AbstractCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
 import org.apache.commons.math3.linear.DiagonalMatrix;
-import org.apache.commons.math3.optimization.direct.PowellOptimizer;
-import org.apache.commons.math3.optimization.fitting.CurveFitter;
-import org.apache.commons.math3.optimization.fitting.PolynomialFitter;
-import org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizer;
-import org.apache.commons.math3.util.FastMath;
+
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
 import org.joda.time.format.DateTimeFormat;
@@ -66,6 +64,8 @@ public class NonLinearRegression {
             Course_degs[counter] = (Double.parseDouble(row[3].toString()));
             Speed[counter] = (Double.parseDouble(row[4].toString()));
             Bearing_degs[counter] = (Double.parseDouble(row[5].toString()));
+            // We divide Bearing Degrees by 10 since the optimization algorithm doesnt work well with large numbers
+            Bearing_degs[counter] = Bearing_degs[counter] / 10;
             counter++;
         }
 
@@ -76,26 +76,32 @@ public class NonLinearRegression {
 
             date[i] = formatter.parseDateTime(DateTime[i]);
             Seconds diff = Seconds.secondsBetween(date[0], date[i]);
-            TimeElapsed[i] = Double.valueOf(diff.getSeconds())/10000;
+            //we divide the Time elapsed by 10000 to ensure it works well with our optimization algorithm
+            TimeElapsed[i] = Double.valueOf(diff.getSeconds()) / 10000;
         }
 
-
-        AbstractCurveFitter fitter=new AbstractCurveFitter() {
+/*This instance obtains the optimum values of B,P and Q and uses them to fit the arctan curve into the equation
+* The  Levenberg Marquardt Optimizer is used to fit the parameters to the observed data since this is a Least squares problem
+* AbstractCurveFitter is used to fit the parameter observed according to our function i.e the Arctan curve
+* The Results of this solution were confirmed with the ones obtained from the python implementation which doesn't use derivatives
+*
+ */
+        AbstractCurveFitter fitter = new AbstractCurveFitter() {
             @Override
             protected LeastSquaresProblem getProblem(Collection<WeightedObservedPoint> points) {
                 final int len = points.size();
-                final double[] target  = new double[len];
+                final double[] target = new double[len];
                 final double[] weights = new double[len];
-                final double[] initialGuess = { 1.0, 1.0,1.0 };
+                final double[] initialGuess = {1.0, 1.0, 1.0};
 
                 int i = 0;
-                for(WeightedObservedPoint point : points) {
-                    target[i]  = point.getY();
+                for (WeightedObservedPoint point : points) {
+                    target[i] = point.getY();
                     weights[i] = point.getWeight();
                     i += 1;
                 }
-                TheoreticalValuesFunction model= new TheoreticalValuesFunction(MathematicalComputations.function,points);
-
+                TheoreticalValuesFunction model = new TheoreticalValuesFunction(MathematicalComputations.function, points);
+                /* building a least squares evaluation by using the maximum possible number of evaluations i.e 2147483647 to ensure we obtain a correct guess*/
                 return new LeastSquaresBuilder().
                         maxEvaluations(Integer.MAX_VALUE).
                         maxIterations(Integer.MAX_VALUE).
@@ -105,33 +111,43 @@ public class NonLinearRegression {
                         model(model.getModelFunction(), model.getModelFunctionJacobian()).
                         build();
             }
+            /* Specifying the optimizer to compute our solution
+            * In our case we use the levenberg Marquardt Optimizer for a least squares optimization
+            * */
+            @Override
+            protected LeastSquaresOptimizer getOptimizer() {
 
-
-
+                return new org.apache.commons.math3.fitting.leastsquares.LevenbergMarquardtOptimizer();
+            }
         };
+        //declaring an Arraylist to hold our observed points
         ArrayList<WeightedObservedPoint> points = new ArrayList<WeightedObservedPoint>();
 
-        // Add points here; for instance,
+        // Adding the  points here,
 
         for (int i = 0; i < TimeElapsed.length; i++) {
-            WeightedObservedPoint point = new WeightedObservedPoint(1.0,TimeElapsed[i],Bearing_degs[i]);
+            WeightedObservedPoint point = new WeightedObservedPoint(1.0, TimeElapsed[i], Bearing_degs[i]);
             points.add(point);
         }
 
+        // the optimum values returned after fitting our curve i.e result contains optimum values for B,P and Q
+        double[] result = fitter.fit(points);
+        // An array to hold our fitting values to be computed by our function
+        double[] Y_fit = new double[TimeElapsed.length];
+        //computing our bearing Bi using the optimum values for B,P and Q
+        for (int i = 0; i < TimeElapsed.length; i++) {
+            Y_fit[i] = MathematicalComputations.function.value(TimeElapsed[i], result);
+        }
 
-double[] result=fitter.fit(points);
-        double[] Y_fit=new double[TimeElapsed.length];
-System.out.println(Arrays.toString(result));
-      for (int i=0;i<TimeElapsed.length;i++){
-         Y_fit[i]=MathematicalComputations.function.value(TimeElapsed[i],result) ;
-      }
-        System.out.println((Arrays.toString(Y_fit)));
 
+        //Since we had divided by 10 we multiply by 10 to obtain the actual values  of bearing Bi in degrees
+        for (int i = 0; i < Y_fit.length; i++) {
+            Y_fit[i]=Y_fit[i]*10;
+        }
+        ScatterPlot.ScatterCreate(TimeElapsed, Y_fit);
+        System.out.println(Integer.MAX_VALUE);
 
-ScatterPlot.ScatterCreate(TimeElapsed, Y_fit);
-        //ScatterPlot.ScatterCreate(TimeElapsed,Bearing_degs);
     }
-
 
 }
 
