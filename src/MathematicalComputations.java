@@ -37,27 +37,34 @@ public class MathematicalComputations {
   public static ParametricUnivariateFunction function=new ParametricUnivariateFunction() {
        @Override
        public double value(double elapsedSecs, double... doubles) {
-           double B= doubles[0];
+          //fitting parameter B is converted into radians since it's in Degrees
+           double B= Math.toRadians(doubles[0]);
            double P=doubles[1];
            double Q= doubles[2];
-           return Math.toDegrees(Math.atan2(Math.sin(Math.toRadians(B))+P*elapsedSecs,Math.cos(Math.toRadians(B))+Q*elapsedSecs));
+           return Math.toDegrees(Math.atan2(Math.sin((B))+P*elapsedSecs,Math.cos((B))+Q*elapsedSecs));
        }
 
       /**
        * This Method is used to compute the gradient of the jacobian matrix above, it does so by returning the partial derivatives of the
        * function above. 1.e partial derivative of the arctan formula  with respect to B,P and Q
+       * it does so by computing the gradient of the equation at each point with respect to B,P and Q
+       * it returns the fitting parameters
        *
        */
        @Override
        public double[] gradient(double v, double... doubles) {
-            double B= doubles[0];
+           //fitting parameter B is converted into radians since it's in Degrees
+            double B= Math.toRadians(doubles[0]);
            double P= doubles[1];
             double Q=doubles[2];
 
             return new double[]{
-                    (( Math.cos(Math.toRadians(B))*(Math.cos(Math.toRadians(B))+Q*v))-(Math.sin(Math.toRadians(B))*((-Math.sin(Math.toRadians(B)))-P*v)))/(Math.pow((Math.sin(Math.toRadians(B))+P*v),2)+Math.pow((Math.cos(Math.toRadians(B))+Q*v),2)),
-                    (( v*(Math.cos(Math.toRadians(B))+Q*v))/(Math.pow((Math.sin(Math.toRadians(B))+P*v),2)+Math.pow((Math.cos(Math.toRadians(B))+Q*v),2))),
-                    (( v*(-Math.sin(Math.toRadians(B))-P*v))/(Math.pow((Math.sin(Math.toRadians(B))+P*v),2)+Math.pow((Math.cos(Math.toRadians(B))+Q*v),2)))
+                    //The partial derivative of the arctan equation with respect to B i.e d/dB
+                    (( Math.cos((B))*(Math.cos((B))+Q*v))-(Math.sin((B))*((-Math.sin((B)))-P*v)))/(Math.pow((Math.sin((B))+P*v),2)+Math.pow((Math.cos((B))+Q*v),2)),
+                    //The partial derivative of the arctan equation with respect to P i.e d/dP
+                    (( v*(Math.cos((B))+Q*v))/(Math.pow((Math.sin((B))+P*v),2)+Math.pow((Math.cos((B))+Q*v),2))),
+                    //The partial derivative of the arctan equation with respect to Q i.e d/dQ
+                    (( v*(-Math.sin((B))-P*v))/(Math.pow((Math.sin((B))+P*v),2)+Math.pow((Math.cos((B))+Q*v),2)))
            };
        }
    };
