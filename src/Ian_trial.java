@@ -9,20 +9,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
-import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.optim.InitialGuess;
 import org.apache.commons.math3.optim.MaxEval;
 import org.apache.commons.math3.optim.PointValuePair;
-import org.apache.commons.math3.optim.SimpleBounds;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.MultiDirectionalSimplex;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
-import org.apache.commons.math3.optim.univariate.BrentOptimizer;
-import org.apache.commons.math3.optim.univariate.SearchInterval;
-import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;
-import org.apache.commons.math3.optim.univariate.UnivariateOptimizer;
-import org.apache.commons.math3.optim.univariate.UnivariatePointValuePair;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -91,34 +84,64 @@ public class Ian_trial {
 		// Now, we have to slice the data into ownship legs
 		List<LegOfData> ownshipLegs = calculateLegs(Course_degs, Speed, bearings, elapsedTimes);
 		
-		// ok, work through the legs
+		// ok, work through the legs.  In the absence of a Discrete Optimisation algorithm we're taking a brue force approach.
+		// Hopefully Craig can find an optimised alternative to this.
 		for (Iterator<LegOfData> iterator = ownshipLegs.iterator(); iterator.hasNext();) {
 			
 			LegOfData thisLeg = (LegOfData) iterator.next();
 			
 			System.out.println("handling leg:" + thisLeg);
 			
-			// ok, declare the function that will experiment with different leg slices
-			UnivariateFunction g = new LegSplitter(thisLeg.times(), thisLeg.bearings()); 
-			
-	        UnivariateOptimizer optimizerMult = new BrentOptimizer(1e-3, 1e-6); 
-	        SearchInterval searchI = new SearchInterval(1, thisLeg.size());
-			UnivariatePointValuePair solutionMult = optimizerMult.optimize(  
-	        		new MaxEval(100),
-	        		GoalType.MINIMIZE,
-	        		new UnivariateObjectiveFunction(g),
-	        		searchI); 
+			double bestScore = Double.MAX_VALUE;
+			int bestIndex = -1;
 
-	        double optimalIndex = solutionMult.getValue();
-	      
-	        // ok, let's slice this leg of data in to the two target legs
-	        int index = (int) optimalIndex;
-	        
-	        System.out.println("slicing leg:" + thisLeg.getName() + " at " + index); 
-	        
-	        // drop out
-	        System.exit(0);
+			// make the two slices				
+			final int BUFFER_REGION = 4; // the number of measurements to ignore whilst the target is turning 
+
+			for(int index=1 + BUFFER_REGION / 2;index<thisLeg.size() - BUFFER_REGION / 2;index++)
+			{
+				List<Double> theseTimes = thisLeg.times();
+				List<Double> theseBearings = thisLeg.bearings();				
+				
+				// first the times
+				List<Double> beforeTimes = theseTimes.subList(0, index - BUFFER_REGION / 2);
+				List<Double> afterTimes = theseTimes.subList(index + BUFFER_REGION / 2, theseTimes.size()-1);
+				
+				// now the bearings
+				List<Double> beforeBearings = theseBearings.subList(0, index);
+				List<Double> afterBearings = theseBearings.subList(index, theseBearings.size()-1);
+				
+				
+		        MultivariateFunction beforeF = new ArcTanSolver(beforeTimes, beforeBearings); 
+		        MultivariateFunction afterF = new ArcTanSolver(afterTimes, afterBearings); 
+	    		    		
+		        SimplexOptimizer optimizerMult = new SimplexOptimizer(1e-3, 1e-6); 
+		        
+		        PointValuePair beforeOptimiser = optimizerMult.optimize( 
+		                new MaxEval(2000000), 
+		                new ObjectiveFunction(beforeF), 
+		                GoalType.MINIMIZE, 
+		                new InitialGuess(new double[] {beforeBearings.get(0), 0, 0} ), 
+		                new MultiDirectionalSimplex(3)); 
+		        
+		        PointValuePair afterOptimiser = optimizerMult.optimize( 
+		                new MaxEval(2000000), 
+		                new ObjectiveFunction(afterF), 
+		                GoalType.MINIMIZE, 
+		                new InitialGuess(new double[] {afterBearings.get(0), 0, 0} ), 
+		                new MultiDirectionalSimplex(3)); 
+
+		        double sum = beforeOptimiser.getValue() + afterOptimiser.getValue();
+		        
+		        if(sum < bestScore)
+		        {
+		        	bestScore = sum;
+		        	bestIndex = index;
+		        }
+			}			
 			
+	        System.out.println("slicing leg:" + thisLeg.getName() + " at index " + bestIndex); 
+	        
 		}
 
 	}
@@ -193,9 +216,6 @@ public class Ian_trial {
 		final List<Double> _times = new ArrayList<Double>();
 		final List<Double> _bearings = new ArrayList<Double>();
 		
-		double _startTime = Long.MAX_VALUE;
-		double _endTime = Long.MIN_VALUE;
-		
 		final private String _myName;
 		
 		public LegOfData(final String name)
@@ -214,21 +234,9 @@ public class Ian_trial {
 		public void add(double time, double bearing)
 		{
 			_times.add(time);
-			_bearings.add(bearing);
-			
-			// sort out the time range
-			_startTime = Math.min(time, _startTime);
-			_endTime = Math.max(time, _endTime);
-			
+			_bearings.add(bearing);		
 		}
-		public double getStartTime()
-		{
-			return _startTime;
-		}
-		public double getEndTime()
-		{
-			return _endTime;
-		}
+
 		public int size()
 		{
 			return _times.size();
@@ -280,70 +288,4 @@ public class Ian_trial {
 			return Math.toDegrees(Math.atan2(Math.sin(Math.toRadians(B))+P*elapsedSecs,Math.cos(Math.toRadians(B))+Q*elapsedSecs));
 		}		
 	}
-	
-	/** function to generate sum of squares of errors for a permutation of slice time
-	 * 
-	 * @author ian
-	 *
-	 */
-	private static class LegSplitter implements UnivariateFunction
-	{
-		final private List<Double> _times;
-		final private List<Double> _bearings;
-
-
-		public LegSplitter(List<Double> times, List<Double> bearings)
-		{
-			_times = times;
-			_bearings = bearings;
-		}
-
-		@Override
-		public double value(double x) {
-			
-			// ok, treat x as the integer to experiments with
-			int index = (int)x;
-			
-			System.out.println(" trying time index:" + x);
-			
-			// use this to make the two slices
-			
-			final int BUFFER_REGION = 4; // the number of measurements to ignore whilst the target is turning 
-			
-			// first the times
-			List<Double> beforeTimes = _times.subList(0, index - BUFFER_REGION / 2);
-			List<Double> afterTimes = _times.subList(index + BUFFER_REGION / 2, _times.size()-1);
-			
-			// now the bearings
-			List<Double> beforeBearings = _bearings.subList(0, index);
-			List<Double> afterBearings = _bearings.subList(index, _bearings.size()-1);
-			
-			
-	        MultivariateFunction beforeF = new ArcTanSolver(beforeTimes, beforeBearings); 
-	        MultivariateFunction afterF = new ArcTanSolver(afterTimes, afterBearings); 
-    		    		
-	        SimplexOptimizer optimizerMult = new SimplexOptimizer(1e-3, 1e-6); 
-	        
-	        PointValuePair beforeOptimiser = optimizerMult.optimize( 
-	                new MaxEval(2000), 
-	                new ObjectiveFunction(beforeF), 
-	                GoalType.MAXIMIZE, 
-	                new InitialGuess(new double[] {beforeBearings.get(0), 0, 0} ), 
-	                new MultiDirectionalSimplex(3)); 
-	        
-	        PointValuePair afterOptimiser = optimizerMult.optimize( 
-	                new MaxEval(2000), 
-	                new ObjectiveFunction(afterF), 
-	                GoalType.MAXIMIZE, 
-	                new InitialGuess(new double[] {afterBearings.get(0), 0, 0} ), 
-	                new MultiDirectionalSimplex(3)); 
-
-	        double sum = beforeOptimiser.getValue() + afterOptimiser.getValue();
-
-	        return sum;
-		}
-		
-	}
-	
-	
 }
