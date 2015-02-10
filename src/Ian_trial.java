@@ -13,11 +13,13 @@ import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.optim.InitialGuess;
 import org.apache.commons.math3.optim.MaxEval;
 import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.optim.SimpleBounds;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.MultiDirectionalSimplex;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import org.apache.commons.math3.optim.univariate.BrentOptimizer;
+import org.apache.commons.math3.optim.univariate.SearchInterval;
 import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;
 import org.apache.commons.math3.optim.univariate.UnivariateOptimizer;
 import org.apache.commons.math3.optim.univariate.UnivariatePointValuePair;
@@ -98,12 +100,14 @@ public class Ian_trial {
 			
 			// ok, declare the function that will experiment with different leg slices
 			UnivariateFunction g = new LegSplitter(thisLeg.times(), thisLeg.bearings()); 
-	        		
+			
 	        UnivariateOptimizer optimizerMult = new BrentOptimizer(1e-3, 1e-6); 
-	        UnivariatePointValuePair solutionMult = optimizerMult.optimize(  
+	        SearchInterval searchI = new SearchInterval(1, thisLeg.size());
+			UnivariatePointValuePair solutionMult = optimizerMult.optimize(  
 	        		new MaxEval(100),
 	        		GoalType.MINIMIZE,
-	        		new UnivariateObjectiveFunction(g)); 
+	        		new UnivariateObjectiveFunction(g),
+	        		searchI); 
 
 	        double optimalIndex = solutionMult.getValue();
 	      
@@ -111,6 +115,9 @@ public class Ian_trial {
 	        int index = (int) optimalIndex;
 	        
 	        System.out.println("slicing leg:" + thisLeg.getName() + " at " + index); 
+	        
+	        // drop out
+	        System.exit(0);
 			
 		}
 
@@ -185,6 +192,10 @@ public class Ian_trial {
 	{
 		final List<Double> _times = new ArrayList<Double>();
 		final List<Double> _bearings = new ArrayList<Double>();
+		
+		double _startTime = Long.MAX_VALUE;
+		double _endTime = Long.MIN_VALUE;
+		
 		final private String _myName;
 		
 		public LegOfData(final String name)
@@ -204,6 +215,19 @@ public class Ian_trial {
 		{
 			_times.add(time);
 			_bearings.add(bearing);
+			
+			// sort out the time range
+			_startTime = Math.min(time, _startTime);
+			_endTime = Math.max(time, _endTime);
+			
+		}
+		public double getStartTime()
+		{
+			return _startTime;
+		}
+		public double getEndTime()
+		{
+			return _endTime;
 		}
 		public int size()
 		{
@@ -280,12 +304,7 @@ public class Ian_trial {
 			// ok, treat x as the integer to experiments with
 			int index = (int)x;
 			
-			// check it's valid
-			if((index <= 0) || (index >= _times.size()))
-			{
-				// ok, invalid - move along
-				return Double.MAX_VALUE;
-			}
+			System.out.println(" trying time index:" + x);
 			
 			// use this to make the two slices
 			
@@ -306,14 +325,14 @@ public class Ian_trial {
 	        SimplexOptimizer optimizerMult = new SimplexOptimizer(1e-3, 1e-6); 
 	        
 	        PointValuePair beforeOptimiser = optimizerMult.optimize( 
-	                new MaxEval(200), 
+	                new MaxEval(2000), 
 	                new ObjectiveFunction(beforeF), 
 	                GoalType.MAXIMIZE, 
 	                new InitialGuess(new double[] {beforeBearings.get(0), 0, 0} ), 
 	                new MultiDirectionalSimplex(3)); 
 	        
 	        PointValuePair afterOptimiser = optimizerMult.optimize( 
-	                new MaxEval(200), 
+	                new MaxEval(2000), 
 	                new ObjectiveFunction(afterF), 
 	                GoalType.MAXIMIZE, 
 	                new InitialGuess(new double[] {afterBearings.get(0), 0, 0} ), 
