@@ -120,15 +120,15 @@ public class Ian_trial {
 		        PointValuePair beforeOptimiser = optimizerMult.optimize( 
 		                new MaxEval(Integer.MAX_VALUE),
 		                new ObjectiveFunction(beforeF), 
-
-		                new InitialGuess(new double[] {1, 1, 1} ),//beforeBearings.get(0)
+		                GoalType.MINIMIZE,
+		                new InitialGuess(new double[] {beforeBearings.get(0), 1, 1} ),//beforeBearings.get(0)
 		                new MultiDirectionalSimplex(3)); 
 		        
 		        PointValuePair afterOptimiser = optimizerMult.optimize( 
 		                new MaxEval(Integer.MAX_VALUE),
 		                new ObjectiveFunction(afterF), 
-
-		                new InitialGuess(new double[] {1, 1, 1} ),//afterBearings.get(0)
+		                GoalType.MINIMIZE,
+		                new InitialGuess(new double[] {afterBearings.get(0), 1, 1} ),//afterBearings.get(0)
 		                new MultiDirectionalSimplex(3)); 
 
 		        double sum = beforeOptimiser.getValue() + afterOptimiser.getValue();
