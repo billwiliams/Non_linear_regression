@@ -4,6 +4,7 @@ import java.util.List;
 /**
  * Created by Bill on 2/9/2015.
  * A class that slices the ownship data into straight legs only
+ * to ensure no single points are  used the counter is incremented by 2.
  */
 public class SlicingLegs {
     public void main (String[] args){
@@ -16,15 +17,15 @@ public class SlicingLegs {
      *
      * @return
      */
-   public static double[] calculatelegs(double[] course_degs,double[] speed){
+   public static int[] calculatelegs(double[] course_degs,double[] speed){
       ArrayList legs=new ArrayList();
-       int index_counter=0;
+
        final double COURSE_TOLERANCE = 0.1;   // degs / sec (just a guess!!)
        final double SPEED_TOLERANCE = 2.0;   // knots / sec  (just a guess!!)
 
-       double lastCourse = 0;
-       double lastSpeed = 0;
-       double lastTime = 0;
+       double lastCourse;
+       double lastSpeed ;
+
        for (int i=1;i<speed.length;i++) {
            lastCourse = course_degs[i] - course_degs[i - 1];
            lastSpeed = speed[i] - speed[i - 1];
@@ -35,9 +36,11 @@ public class SlicingLegs {
            }
 
        }
-       double[] legs_cuts=new double[legs.size()];
+       //an array to hold the specific points to slice our straight legs
+       int[] legs_cuts=new int[legs.size()];
        for(int i=0;i<legs.size();i++){
-           legs_cuts[i]=Double.parseDouble(legs.get(i).toString());
+           //storing the straight leg slice points in the array
+           legs_cuts[i]=Integer.parseInt(legs.get(i).toString());
        }
       return legs_cuts;
    }
