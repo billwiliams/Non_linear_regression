@@ -18,7 +18,6 @@ import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.MultiDirectionalSimplex;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import org.apache.commons.math3.optim.univariate.BrentOptimizer;
-import org.apache.commons.math3.optim.univariate.SearchInterval;
 import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;
 import org.apache.commons.math3.optim.univariate.UnivariateOptimizer;
 import org.apache.commons.math3.optim.univariate.UnivariatePointValuePair;
@@ -101,10 +100,10 @@ public class Ian_trial {
 			UnivariateFunction g = new LegSplitter(thisLeg.times(), thisLeg.bearings()); 
 	        		
 	        UnivariateOptimizer optimizerMult = new BrentOptimizer(1e-3, 1e-6); 
-	        UnivariatePointValuePair solutionMult = optimizerMult.optimize(         		
+	        UnivariatePointValuePair solutionMult = optimizerMult.optimize(  
+	        		new MaxEval(100),
 	        		GoalType.MINIMIZE,
-	        		new UnivariateObjectiveFunction(g),
-	        		new SearchInterval(0, elapsedTimes.length)); 
+	        		new UnivariateObjectiveFunction(g)); 
 
 	        double optimalIndex = solutionMult.getValue();
 	      
