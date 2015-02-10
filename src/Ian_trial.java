@@ -78,7 +78,7 @@ public class Ian_trial {
 				// ok, first time - store it;
 				firstDate = date[i].getMillis();
 			}			
-			elapsedTimes[i] = (date[i].getMillis() - firstDate) / 1000d;
+			elapsedTimes[i] = (date[i].getMillis() - firstDate) / 10000d;
 		}
 		
 		// Now, we have to slice the data into ownship legs
@@ -118,17 +118,17 @@ public class Ian_trial {
 		        SimplexOptimizer optimizerMult = new SimplexOptimizer(1e-3, 1e-6); 
 		        
 		        PointValuePair beforeOptimiser = optimizerMult.optimize( 
-		                new MaxEval(2000000), 
+		                new MaxEval(Integer.MAX_VALUE),
 		                new ObjectiveFunction(beforeF), 
-		                GoalType.MINIMIZE, 
-		                new InitialGuess(new double[] {beforeBearings.get(0), 0, 0} ), 
+
+		                new InitialGuess(new double[] {1, 1, 1} ),//beforeBearings.get(0)
 		                new MultiDirectionalSimplex(3)); 
 		        
 		        PointValuePair afterOptimiser = optimizerMult.optimize( 
-		                new MaxEval(2000000), 
+		                new MaxEval(Integer.MAX_VALUE),
 		                new ObjectiveFunction(afterF), 
-		                GoalType.MINIMIZE, 
-		                new InitialGuess(new double[] {afterBearings.get(0), 0, 0} ), 
+
+		                new InitialGuess(new double[] {1, 1, 1} ),//afterBearings.get(0)
 		                new MultiDirectionalSimplex(3)); 
 
 		        double sum = beforeOptimiser.getValue() + afterOptimiser.getValue();
@@ -140,7 +140,7 @@ public class Ian_trial {
 		        }
 			}			
 			
-	        System.out.println("slicing leg:" + thisLeg.getName() + " at index " + bestIndex); 
+	        System.out.println("slicing leg:" + thisLeg.getName() + " at index " + bestIndex);
 	        
 		}
 
