@@ -144,8 +144,8 @@ public class NonLinearRegression {
         for (int i = 0; i < Y_fit.length; i++) {
             Y_fit[i]=Y_fit[i]*10;
         }
-        ScatterPlot.ScatterCreate(TimeElapsed, Y_fit);
-        System.out.println(Integer.MAX_VALUE);
+//        ScatterPlot.ScatterCreate(TimeElapsed, Y_fit);
+//        System.out.println(Integer.MAX_VALUE);
 
     }
 
