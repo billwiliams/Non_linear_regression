@@ -80,7 +80,11 @@ public class Ian_trial {
 			}			
 			elapsedTimes[i] = (date[i].getMillis() - firstDate) / 10000d;
 		}
+
+		long startTime = System.currentTimeMillis();
+		System.out.println("data loaded - computing");
 		
+
 		// Now, we have to slice the data into ownship legs
 		List<LegOfData> ownshipLegs = calculateLegs(Course_degs, Speed, bearings, elapsedTimes);
 		
@@ -90,7 +94,7 @@ public class Ian_trial {
 			
 			LegOfData thisLeg = (LegOfData) iterator.next();
 			
-			System.out.println("handling leg:" + thisLeg);
+			System.out.println(" handling leg:" + thisLeg);
 			
 			double bestScore = Double.MAX_VALUE;
 			int bestIndex = -1;
@@ -117,15 +121,17 @@ public class Ian_trial {
 	    		    		
 		        SimplexOptimizer optimizerMult = new SimplexOptimizer(1e-3, 1e-6); 
 		        
-		        PointValuePair beforeOptimiser = optimizerMult.optimize( 
-		                new MaxEval(Integer.MAX_VALUE),
+		        int MAX_ITERATIONS = Integer.MAX_VALUE;
+		        
+				PointValuePair beforeOptimiser = optimizerMult.optimize( 
+		                new MaxEval(MAX_ITERATIONS),
 		                new ObjectiveFunction(beforeF), 
 		                GoalType.MINIMIZE,
 		                new InitialGuess(new double[] {beforeBearings.get(0), 1, 1} ),//beforeBearings.get(0)
 		                new MultiDirectionalSimplex(3)); 
 		        
 		        PointValuePair afterOptimiser = optimizerMult.optimize( 
-		                new MaxEval(Integer.MAX_VALUE),
+		                new MaxEval(MAX_ITERATIONS),
 		                new ObjectiveFunction(afterF), 
 		                GoalType.MINIMIZE,
 		                new InitialGuess(new double[] {afterBearings.get(0), 1, 1} ),//afterBearings.get(0)
@@ -140,9 +146,12 @@ public class Ian_trial {
 		        }
 			}			
 			
-	        System.out.println("slicing leg:" + thisLeg.getName() + " at index " + bestIndex);
+	        System.out.println(" slicing leg:" + thisLeg.getName() + " at index " + bestIndex);
 	        
 		}
+		
+		long elapsed = System.currentTimeMillis() - startTime;
+		System.out.println("Elapsed:" + elapsed / 1000 + " secs");
 
 	}
 
