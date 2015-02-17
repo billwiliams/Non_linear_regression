@@ -1,0 +1,159 @@
+;; ASSET build:,4-August-2006 13:34
+;; ASSET Output recorded at:,Wed Feb 11 09:44:40 GMT 2015, name:,Narrowband Tracking Scenario (High_BRate)
+DTG,Track name, x (m), y (m), z (m), course (degs), speed (m/s), dem course (Degs), dem speed (m/s), dem depth (m), fuel, activity
+100112 120000,SENSOR,11000.00 ,24000.00 ,0.00 ,205.00 ,6.17 ,100.00 ,inactive
+100112 120000,SENSOR,11000.00 ,24000.00 ,0.00 ,205.00 ,6.17 ,200.00 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 120047,SENSOR,10899.35 ,23727.91 ,0.00 ,200.00 ,6.17 ,200.00 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 120134,SENSOR,10800.16 ,23455.25 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 120221,SENSOR,10700.97 ,23182.58 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 120308,SENSOR,10601.78 ,22909.92 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 120355,SENSOR,10502.59 ,22637.25 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 120442,SENSOR,10403.40 ,22364.59 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 120529,SENSOR,10304.21 ,22091.92 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 120616,SENSOR,10205.02 ,21819.25 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 120703,SENSOR,10105.83 ,21546.59 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 120750,SENSOR,10006.63 ,21273.92 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 120837,SENSOR,9907.44 ,21001.26 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 120924,SENSOR,9808.25 ,20728.59 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 121011,SENSOR,9709.06 ,20455.93 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 121058,SENSOR,9609.87 ,20183.26 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 121145,SENSOR,9510.68 ,19910.60 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 121232,SENSOR,9411.49 ,19637.93 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 121319,SENSOR,9312.30 ,19365.27 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 121406,SENSOR,9213.11 ,19092.60 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 121453,SENSOR,9113.92 ,18819.93 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 121540,SENSOR,9014.73 ,18547.27 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 121627,SENSOR,8915.54 ,18274.60 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 121714,SENSOR,8816.35 ,18001.94 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 121801,SENSOR,8717.16 ,17729.27 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 121848,SENSOR,8617.97 ,17456.61 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 121935,SENSOR,8518.78 ,17183.94 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 122022,SENSOR,8419.59 ,16911.28 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 122109,SENSOR,8320.40 ,16638.61 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 122156,SENSOR,8221.21 ,16365.94 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 122243,SENSOR,8122.02 ,16093.28 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 122330,SENSOR,8022.83 ,15820.61 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 122417,SENSOR,7923.64 ,15547.95 ,0.00 ,199.99 ,6.17 ,199.99 ,6.17 ,0.00 ,100.00 ,sensor route:leg one:Heading for target location
+100112 122504,SENSOR,7738.29 ,15333.00 ,0.00 ,241.55 ,6.17 ,310.00 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 122551,SENSOR,7457.00 ,15295.12 ,0.00 ,283.11 ,6.17 ,311.46 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 122638,SENSOR,7214.94 ,15447.29 ,0.00 ,312.59 ,6.17 ,312.59 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 122725,SENSOR,7002.29 ,15644.67 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 122812,SENSOR,6789.63 ,15842.06 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 122859,SENSOR,6576.97 ,16039.45 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 122946,SENSOR,6364.31 ,16236.84 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 123033,SENSOR,6151.66 ,16434.23 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 123120,SENSOR,5939.00 ,16631.62 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 123207,SENSOR,5726.34 ,16829.01 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 123254,SENSOR,5513.68 ,17026.39 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 123341,SENSOR,5301.03 ,17223.78 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 123428,SENSOR,5088.37 ,17421.17 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 123515,SENSOR,4875.71 ,17618.56 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 123602,SENSOR,4663.05 ,17815.95 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 123649,SENSOR,4450.40 ,18013.34 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 123736,SENSOR,4237.74 ,18210.73 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 123823,SENSOR,4025.08 ,18408.11 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 123910,SENSOR,3812.42 ,18605.50 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 123957,SENSOR,3599.77 ,18802.89 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 124044,SENSOR,3387.11 ,19000.28 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 124131,SENSOR,3174.45 ,19197.67 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 124218,SENSOR,2961.79 ,19395.06 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 124305,SENSOR,2749.14 ,19592.45 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 124352,SENSOR,2536.48 ,19789.83 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 124439,SENSOR,2323.82 ,19987.22 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 124526,SENSOR,2111.16 ,20184.61 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 124613,SENSOR,1898.51 ,20382.00 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 124700,SENSOR,1685.85 ,20579.39 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 124747,SENSOR,1473.19 ,20776.78 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 124834,SENSOR,1260.53 ,20974.17 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 124921,SENSOR,1047.88 ,21171.55 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 125008,SENSOR,835.22 ,21368.94 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 125055,SENSOR,622.56 ,21566.33 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 125142,SENSOR,409.90 ,21763.72 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 125229,SENSOR,197.24 ,21961.11 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 125316,SENSOR,-15.41 ,22158.50 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 125403,SENSOR,-228.07 ,22355.89 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 125450,SENSOR,-440.73 ,22553.27 ,0.00 ,312.87 ,6.17 ,312.87 ,6.17 ,0.00 ,100.00 ,sensor route:leg two:Heading for target location
+100112 125537,SENSOR,-566.72 ,22807.61 ,0.00 ,354.43 ,6.17 ,60.00 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 125624,SENSOR,-492.26 ,23081.49 ,0.00 ,35.99 ,6.17 ,60.88 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 125711,SENSOR,-260.99 ,23251.41 ,0.00 ,61.51 ,6.17 ,61.51 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 125758,SENSOR,-5.68 ,23389.25 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 125845,SENSOR,249.64 ,23527.09 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 125932,SENSOR,504.96 ,23664.93 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 130019,SENSOR,760.28 ,23802.76 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 130106,SENSOR,1015.59 ,23940.60 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 130153,SENSOR,1270.91 ,24078.44 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 130240,SENSOR,1526.23 ,24216.28 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 130327,SENSOR,1781.54 ,24354.11 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 130414,SENSOR,2036.86 ,24491.95 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 130501,SENSOR,2292.18 ,24629.79 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 130548,SENSOR,2547.49 ,24767.63 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 130635,SENSOR,2802.81 ,24905.46 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 130722,SENSOR,3058.13 ,25043.30 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 130809,SENSOR,3313.45 ,25181.14 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 130856,SENSOR,3568.76 ,25318.98 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 130943,SENSOR,3824.08 ,25456.82 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 131030,SENSOR,4079.40 ,25594.65 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 131117,SENSOR,4334.72 ,25732.49 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 131204,SENSOR,4590.03 ,25870.33 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 131251,SENSOR,4845.35 ,26008.17 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 131338,SENSOR,5100.67 ,26146.00 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 131425,SENSOR,5355.99 ,26283.84 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 131512,SENSOR,5611.30 ,26421.68 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 131559,SENSOR,5866.62 ,26559.52 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 131646,SENSOR,6121.94 ,26697.35 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 131733,SENSOR,6377.26 ,26835.19 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 131820,SENSOR,6632.57 ,26973.03 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 131907,SENSOR,6887.89 ,27110.87 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 131954,SENSOR,7143.21 ,27248.70 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 132041,SENSOR,7398.53 ,27386.54 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 132128,SENSOR,7653.84 ,27524.38 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 132215,SENSOR,7909.16 ,27662.22 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 132302,SENSOR,8164.48 ,27800.05 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 132349,SENSOR,8419.80 ,27937.89 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 132436,SENSOR,8675.11 ,28075.73 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 132523,SENSOR,8930.43 ,28213.57 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 132610,SENSOR,9185.75 ,28351.41 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 132657,SENSOR,9441.07 ,28489.24 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 132744,SENSOR,9696.38 ,28627.08 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 132831,SENSOR,9951.70 ,28764.92 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 132918,SENSOR,10207.02 ,28902.76 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 133005,SENSOR,10462.34 ,29040.59 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 133052,SENSOR,10717.66 ,29178.43 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 133139,SENSOR,10972.97 ,29316.27 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 133226,SENSOR,11228.29 ,29454.11 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 133313,SENSOR,11483.61 ,29591.94 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 133400,SENSOR,11738.93 ,29729.78 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 133447,SENSOR,11994.25 ,29867.62 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 133534,SENSOR,12249.56 ,30005.46 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 133621,SENSOR,12504.88 ,30143.29 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 133708,SENSOR,12760.20 ,30281.13 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 133755,SENSOR,13015.52 ,30418.97 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 133842,SENSOR,13270.84 ,30556.81 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 133929,SENSOR,13526.16 ,30694.64 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 134016,SENSOR,13781.47 ,30832.48 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 134103,SENSOR,14036.79 ,30970.32 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 134150,SENSOR,14292.11 ,31108.16 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 134237,SENSOR,14547.43 ,31246.00 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 134324,SENSOR,14802.75 ,31383.83 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 134411,SENSOR,15058.07 ,31521.67 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 134458,SENSOR,15313.38 ,31659.51 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,sensor route:leg three:Heading for target location
+100112 134545,SENSOR,15568.70 ,31797.35 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 134632,SENSOR,15824.02 ,31935.18 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 134719,SENSOR,16079.34 ,32073.02 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 134806,SENSOR,16334.66 ,32210.86 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 134853,SENSOR,16589.98 ,32348.70 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 134940,SENSOR,16845.29 ,32486.53 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 135027,SENSOR,17100.61 ,32624.37 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 135114,SENSOR,17355.93 ,32762.21 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 135201,SENSOR,17611.25 ,32900.05 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 135248,SENSOR,17866.57 ,33037.88 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 135335,SENSOR,18121.89 ,33175.72 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 135422,SENSOR,18377.21 ,33313.56 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 135509,SENSOR,18632.53 ,33451.40 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 135556,SENSOR,18887.84 ,33589.23 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 135643,SENSOR,19143.16 ,33727.07 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 135730,SENSOR,19398.48 ,33864.91 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 135817,SENSOR,19653.80 ,34002.75 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 135904,SENSOR,19909.12 ,34140.59 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 135951,SENSOR,20164.44 ,34278.42 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive
+100112 140038,SENSOR,20419.76 ,34416.26 ,0.00 ,61.64 ,6.17 ,61.64 ,6.17 ,0.00 ,100.00 ,inactive

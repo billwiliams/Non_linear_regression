@@ -3,7 +3,6 @@
  *A project to determine the Linear regression for maritime analytic using java
  * Modules such as apache commons maths libraries and Jfreechart are used for analysis and visualization
  */
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,72 +16,19 @@ import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.MultiDirectionalSimplex;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import au.com.bytecode.opencsv.CSVReader;
 
 public class Ian_trial {
-
+	
 	public static void main(String[] args) throws Exception {
-		/* Reading a csv file to obtain data for analysis */
-
-		// Filename containing the data
-		String csvFilename = "data/ArcTan_Data.csv";
-		// Reading the csv file but ignoring the first column since it contains
-		// headings the result is stored in a list
-		CSVReader csvReader = new CSVReader(new FileReader(csvFilename), ',',
-				'\'', 1);
-		final List<String[]> content = csvReader.readAll();
-		// variable to hold each row of the List while iterating through it
-		String[] row = null;
-		// counter used to populate the variables with data from the csv file
-		int counter = 0;
-		// initializing the variables to hold data in the csv file
-		double X_m[] = new double[content.size()];
-		double Y_m[] = new double[content.size()];
-		String DateTime[] = new String[content.size()];
-		double Speed[] = new double[content.size()];
-		double Course_degs[] = new double[content.size()];
-		final Double bearings[] = new Double[content.size()];
-		org.joda.time.DateTime date[] = new DateTime[content.size()];
-		final Double elapsedTimes[] = new Double[content.size()];
-
-		for (Object object : content) {
-			row = (String[]) object;
-			/* parsing data from the list to the variables */
-			DateTime[counter] = row[0].toString();
-			X_m[counter] = (Double.parseDouble(row[1].toString()));
-			Y_m[counter] = (Double.parseDouble(row[2].toString()));
-			Course_degs[counter] = (Double.parseDouble(row[3].toString()));
-			Speed[counter] = (Double.parseDouble(row[4].toString()));
-			bearings[counter] = (Double.parseDouble(row[5].toString()));
-			counter++;
-		}
-
-		csvReader.close();
-		/*
-		 * Method to obtain the number of seconds elapsed in every bearing
-		 * reading
-		 */
-		DateTimeFormatter formatter = DateTimeFormat
-				.forPattern("dd/MM/yyyy HH:mm:ss");
-		long firstDate = 0;
-		for (int i = 0; i < content.size(); i++) {
-			// take a copy of the data - it will be useful later on
-			date[i] = formatter.parseDateTime(DateTime[i]);
-			
-			// is this the first row?
-			if(i==0)
-			{
-				// ok, first time - store it;
-				firstDate = date[i].getMillis();
-			}			
-			elapsedTimes[i] = (date[i].getMillis() - firstDate) / 10000d;
-		}
+		
+		Track ownshipTrack = new Track("data/Scen1_Ownship.csv");
+		Track targetTrack = new Track("data/Scen1_Target.csv");
+		Sensor sensor = new Sensor("data/Scen1_Sensor.csv");
 		
 		// Now, we have to slice the data into ownship legs
-		List<LegOfData> ownshipLegs = calculateLegs(Course_degs, Speed, bearings, elapsedTimes);
+		List<LegOfData> ownshipLegs = calculateLegs(ownshipTrack);
+		
+		long startTime = System.currentTimeMillis();
 		
 		// ok, work through the legs.  In the absence of a Discrete Optimisation algorithm we're taking a brue force approach.
 		// Hopefully Craig can find an optimised alternative to this.
@@ -90,7 +36,27 @@ public class Ian_trial {
 			
 			LegOfData thisLeg = (LegOfData) iterator.next();
 			
-			System.out.println("handling leg:" + thisLeg);
+			System.out.println(" handling leg:" + thisLeg);
+			
+			// ok, extract the relevant data
+			List<Double> bearings = sensor.extractBearings(thisLeg.getStart(), thisLeg.getEnd());
+			List<Long> times = sensor.extractTimes(thisLeg.getStart(), thisLeg.getEnd());
+			
+			// find the error score for the overall leg
+	        MultivariateFunction wholeLeg = new ArcTanSolver(times, bearings); 
+	        SimplexOptimizer wholeOptimizer = new SimplexOptimizer(1e-3, 1e-6); 
+	        
+	        int MAX_ITERATIONS = Integer.MAX_VALUE;
+	        
+			PointValuePair wholeLegOptimiser = wholeOptimizer.optimize( 
+	                new MaxEval(MAX_ITERATIONS),
+	                new ObjectiveFunction(wholeLeg), 
+	                GoalType.MINIMIZE,
+	                new InitialGuess(new double[] {bearings.get(0), 1, 1} ),//beforeBearings.get(0)
+	                new MultiDirectionalSimplex(3)); 
+
+			System.out.println(" whole leg score:" + wholeLegOptimiser.getValue().intValue());
+			
 			
 			double bestScore = Double.MAX_VALUE;
 			int bestIndex = -1;
@@ -100,12 +66,12 @@ public class Ian_trial {
 
 			for(int index=1 + BUFFER_REGION / 2;index<thisLeg.size() - BUFFER_REGION / 2;index++)
 			{
-				List<Double> theseTimes = thisLeg.times();
-				List<Double> theseBearings = thisLeg.bearings();				
+				List<Long> theseTimes = times;
+				List<Double> theseBearings = bearings;				
 				
 				// first the times
-				List<Double> beforeTimes = theseTimes.subList(0, index - BUFFER_REGION / 2);
-				List<Double> afterTimes = theseTimes.subList(index + BUFFER_REGION / 2, theseTimes.size()-1);
+				List<Long> beforeTimes = theseTimes.subList(0, index - BUFFER_REGION / 2);
+				List<Long> afterTimes = theseTimes.subList(index + BUFFER_REGION / 2, theseTimes.size()-1);
 				
 				// now the bearings
 				List<Double> beforeBearings = theseBearings.subList(0, index);
@@ -117,18 +83,18 @@ public class Ian_trial {
 	    		    		
 		        SimplexOptimizer optimizerMult = new SimplexOptimizer(1e-3, 1e-6); 
 		        
-		        PointValuePair beforeOptimiser = optimizerMult.optimize( 
-		                new MaxEval(Integer.MAX_VALUE),
+				PointValuePair beforeOptimiser = optimizerMult.optimize( 
+		                new MaxEval(MAX_ITERATIONS),
 		                new ObjectiveFunction(beforeF), 
-
-		                new InitialGuess(new double[] {1, 1, 1} ),//beforeBearings.get(0)
+		                GoalType.MINIMIZE,
+		                new InitialGuess(new double[] {beforeBearings.get(0), 1, 1} ),//beforeBearings.get(0)
 		                new MultiDirectionalSimplex(3)); 
 		        
 		        PointValuePair afterOptimiser = optimizerMult.optimize( 
-		                new MaxEval(Integer.MAX_VALUE),
+		                new MaxEval(MAX_ITERATIONS),
 		                new ObjectiveFunction(afterF), 
-
-		                new InitialGuess(new double[] {1, 1, 1} ),//afterBearings.get(0)
+		                GoalType.MINIMIZE,
+		                new InitialGuess(new double[] {afterBearings.get(0), 1, 1} ),//afterBearings.get(0)
 		                new MultiDirectionalSimplex(3)); 
 
 		        double sum = beforeOptimiser.getValue() + afterOptimiser.getValue();
@@ -140,9 +106,12 @@ public class Ian_trial {
 		        }
 			}			
 			
-	        System.out.println("slicing leg:" + thisLeg.getName() + " at index " + bestIndex);
+	        System.out.println(" split sum:" + (int)bestScore + " at time " + times.get(bestIndex));
 	        
 		}
+		
+		long elapsed = System.currentTimeMillis() - startTime;
+		System.out.println("Elapsed:" + elapsed / 1000 + " secs");
 
 	}
 
@@ -154,8 +123,7 @@ public class Ian_trial {
 	 * @param elapsedTimes
 	 * @return
 	 */
-	private static List<LegOfData> calculateLegs(double[] course_degs,
-			double[] speed, Double[] bearings, Double[] elapsedTimes) {
+	private static List<LegOfData> calculateLegs(Track track) {
 		
 		final double COURSE_TOLERANCE = 0.1;   // degs / sec (just a guess!!)
 		final double SPEED_TOLERANCE = 2;   // knots / sec  (just a guess!!)
@@ -167,11 +135,15 @@ public class Ian_trial {
 		List<LegOfData> legs = new ArrayList<LegOfData>();
 		legs.add(new LegOfData("Ownship Leg 0"));
 		
-		for (int i = 0; i < elapsedTimes.length; i++) {
-			Double thisTime = elapsedTimes[i];
+		DateTime[] times = track.getDates();
+		double[] speeds = track.getSpeeds();
+		double[] courses = track.getCourses();
+		
+		for (int i = 0; i < times.length; i++) {
+			long thisTime = times[i].getMillis();
 			
-			double thisSpeed = speed[i];
-			double thisCourse = course_degs[i];
+			double thisSpeed = speeds[i];
+			double thisCourse = courses[i];
 			
 			if(i > 0)
 			{
@@ -184,7 +156,7 @@ public class Ian_trial {
 				if((courseRate < COURSE_TOLERANCE) && (speedRate < SPEED_TOLERANCE))
 				{
 					// ok, we're on a new leg - drop the current one
-					legs.get(legs.size()-1).add(thisTime, bearings[i]);
+					legs.get(legs.size()-1).add(thisTime);
 				}
 				else
 				{
@@ -213,8 +185,7 @@ public class Ian_trial {
 	 */
 	private static class LegOfData
 	{
-		final List<Double> _times = new ArrayList<Double>();
-		final List<Double> _bearings = new ArrayList<Double>();
+		final List<Long> _times = new ArrayList<Long>();
 		
 		final private String _myName;
 		
@@ -222,21 +193,19 @@ public class Ian_trial {
 		{
 			_myName = name;
 		}
+		public Long getEnd() {
+			return _times.get(_times.size()-1);
+		}
+		public Long getStart() {
+			return _times.get(0);
+		}
 		public String getName() {
 			return _myName;
 		}
-		public List<Double> bearings() {
-			return _bearings;
-		}
-		public List<Double> times() {
-			return _times;
-		}
-		public void add(double time, double bearing)
+		public void add(long time)
 		{
 			_times.add(time);
-			_bearings.add(bearing);		
 		}
-
 		public int size()
 		{
 			return _times.size();
@@ -254,10 +223,10 @@ public class Ian_trial {
 	 */
 	private static class ArcTanSolver implements MultivariateFunction
 	{
-		final private List<Double> _times;
+		final private List<Long> _times;
 		final private List<Double> _bearings;
 
-		public ArcTanSolver(List<Double> beforeTimes, List<Double> beforeBearings)
+		public ArcTanSolver(List<Long> beforeTimes, List<Double> beforeBearings)
 		{
 			_times = beforeTimes;
 			_bearings = beforeBearings;
@@ -273,8 +242,8 @@ public class Ian_trial {
         	
         	// ok, loop through the data
         	for (int i = 0; i < _times.size(); i++) {
-        		Double elapsedSecs = _times.get(i);
-				double thisForecast = calcForecast(B, P, Q, elapsedSecs); 
+        		Long elapsedSecs = _times.get(i);
+				double thisForecast = calcForecast(B, P, Q, elapsedSecs / 1000d); 
 				Double thisMeasured = _bearings.get(i);
 				double thisError = Math.pow(thisForecast - thisMeasured, 2);
 				runningSum += thisError;
