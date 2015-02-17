@@ -6,7 +6,10 @@
 import au.com.bytecode.opencsv.CSVReader;
 
 
-
+import flanagan.math.Minimisation;
+import flanagan.math.MinimisationFunction;
+import flanagan.math.MinimizationFunction;
+import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.fitting.AbstractCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
@@ -14,6 +17,13 @@ import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
 import org.apache.commons.math3.linear.DiagonalMatrix;
 
+import org.apache.commons.math3.optim.InitialGuess;
+import org.apache.commons.math3.optim.MaxEval;
+import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
+import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.MultiDirectionalSimplex;
+import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
 import org.joda.time.format.DateTimeFormat;
@@ -51,9 +61,11 @@ public class NonLinearRegression {
         double Speed[] = new double[content.size()];
         double Course_degs[] = new double[content.size()];
         final double Bearing_degs[] = new double[content.size()];
+        final double Bearing_degs_dif[] = new double[content.size()];
         org.joda.time.DateTime date[] = new DateTime[content.size()];
         final double TimeElapsed[] = new double[content.size()];
         double SquaredErrors;
+        String[] graplabels;
 
         for (Object object : content) {
             row = (String[]) object;
@@ -65,7 +77,7 @@ public class NonLinearRegression {
             Speed[counter] = (Double.parseDouble(row[4].toString()));
             Bearing_degs[counter] = (Double.parseDouble(row[5].toString()));
             // We divide Bearing Degrees by 10 since the optimization algorithm doesnt work well with large numbers
-            Bearing_degs[counter] = Bearing_degs[counter] / 10;
+            Bearing_degs_dif[counter] = Bearing_degs[counter] / 10;
             counter++;
         }
 
@@ -79,75 +91,144 @@ public class NonLinearRegression {
             //we divide the Time elapsed by 10000 to ensure it works well with our optimization algorithm
             TimeElapsed[i] = Double.valueOf(diff.getSeconds()) / 10000;
         }
-
-/*This instance obtains the optimum values of B,P and Q and uses them to fit the arctan curve into the equation
-* The  Levenberg Marquardt Optimizer is used to fit the parameters to the observed data since this is a Least squares problem
-* AbstractCurveFitter is used to fit the parameter observed according to our function i.e the Arctan curve
-* The Results of this solution were confirmed with the ones obtained from the python implementation which doesn't use derivatives
-*
- */
-        AbstractCurveFitter fitter = new AbstractCurveFitter() {
-            @Override
-            protected LeastSquaresProblem getProblem(Collection<WeightedObservedPoint> points) {
-                final int len = points.size();
-                final double[] target = new double[len];
-                final double[] weights = new double[len];
-                final double[] initialGuess = {1.0, 1.0, 1.0};
-
-                int i = 0;
-                for (WeightedObservedPoint point : points) {
-                    target[i] = point.getY();
-                    weights[i] = point.getWeight();
-                    i += 1;
-                }
-                TheoreticalValuesFunction model = new TheoreticalValuesFunction(MathematicalComputations.function, points);
-                /* building a least squares evaluation by using the maximum possible number of evaluations i.e 2147483647 to ensure we obtain a correct guess*/
-                return new LeastSquaresBuilder().
-                        maxEvaluations(Integer.MAX_VALUE).
-                        maxIterations(Integer.MAX_VALUE).
-                        start(initialGuess).
-                        target(target).
-                        weight(new DiagonalMatrix(weights)).
-                        model(model.getModelFunction(), model.getModelFunctionJacobian()).
-                        build();
-            }
-            /* Specifying the optimizer to compute our solution
-            * In our case we use the levenberg Marquardt Optimizer for a least squares optimization
-            * */
-            @Override
-            protected LeastSquaresOptimizer getOptimizer() {
-
-                return new org.apache.commons.math3.fitting.leastsquares.LevenbergMarquardtOptimizer();
-            }
-        };
-        //declaring an Arraylist to hold our observed points
+        /*computing the number of ownship straight legs*/
+        int[] legs_cuts = SlicingLegs.calculatelegs(Course_degs, Speed);
+        graplabels = new String[5];
+        graplabels[0] = "A graph of Fitted parameters against Bearing";
+        graplabels[1] = "Time";
+        graplabels[2] = "Bearing";
+        graplabels[3] = "Bi(Measured)";
+        graplabels[4] = "Bi(Computed)";
         ArrayList<WeightedObservedPoint> points = new ArrayList<WeightedObservedPoint>();
-
-        // Adding the  points here,
-
-        for (int i = 0; i < TimeElapsed.length; i++) {
+        for (int i = 2; i < 30; i++) {
             WeightedObservedPoint point = new WeightedObservedPoint(1.0, TimeElapsed[i], Bearing_degs[i]);
             points.add(point);
         }
+        double[] results = MathematicalComputations.fitter.fit(points);
+        //using the LMA optimizer
+        System.out.println("Optimized Parameters for data from index 2 to 30");
+        System.out.println("Optimized params B,P,Q for the LMA optimizer are \n"+Arrays.toString(results));
+        ArrayList<Double> beforeTimes = new ArrayList<Double>();
+        ArrayList<Double> beforeBearings = new ArrayList<Double>();
+        for (int i = 2; i < 30; i++) {
+            beforeTimes.add(TimeElapsed[i]);
+            beforeBearings.add(Bearing_degs[i]);
+        }
+        MultivariateFunction beforeF = new ArcTanSolver(beforeTimes, beforeBearings);
+        SimplexOptimizer optimizerMult = new SimplexOptimizer(1e-6, 1e-6);
 
-        // the optimum values returned after fitting our curve i.e result contains optimum values for B,P and Q
-        double[] result = fitter.fit(points);
-        // An array to hold our fitting values to be computed by our function
-        double[] Y_fit = new double[TimeElapsed.length];
-        //computing our bearing Bi using the optimum values for B,P and Q
-        for (int i = 0; i < TimeElapsed.length; i++) {
-            Y_fit[i] = MathematicalComputations.function.value(TimeElapsed[i], result);
+
+        PointValuePair beforeOptimiser = optimizerMult.optimize(
+                new MaxEval(Integer.MAX_VALUE),
+                new ObjectiveFunction(beforeF),
+                GoalType.MINIMIZE,
+                new InitialGuess(new double[]{1, 1, 1}),
+                new MultiDirectionalSimplex(3));
+//Optimized params using the simplex optimizer
+        double[] keys = beforeOptimiser.getKey();
+
+        System.out.println("optimized Params B,P,Q for the simplex optimizer are\n " + Arrays.toString(keys));
+        double[] Y_fitop = new double[28];
+        double[] Y_fit = new double[28];
+        for (int i = 0; i < 28; i++) {
+            Y_fit[i] = MathematicalComputations.function.value(TimeElapsed[i + 2], results);
+            Y_fitop[i] = MathematicalComputations.function.value(TimeElapsed[i + 2], keys);
+        }
+//Optimized params using the flanagan.jar nelder-mead optimizer
+        System.out.println("Optimized params B,P and Q for the flanagan. jar optimizer are \n"+Arrays.toString(optimiseThis(beforeTimes, beforeBearings, 153.0).getParamValues()));
+    }
+
+    private static class ArcTanSolver implements MultivariateFunction {
+        final private List<Double> _times;
+        final private List<Double> _bearings;
+
+        public ArcTanSolver(List<Double> beforeTimes, List<Double> beforeBearings) {
+            _times = beforeTimes;
+            _bearings = beforeBearings;
         }
 
+        @Override
+        public double value(double[] point) {
+            double B = point[0];
+            double P = point[1];
+            double Q = point[2];
 
-        //Since we had divided by 10 we multiply by 10 to obtain the actual values  of bearing Bi in degrees
-        for (int i = 0; i < Y_fit.length; i++) {
-            Y_fit[i]=Y_fit[i]*10;
+            double runningSum = 0;
+
+            // ok, loop through the data
+            for (int i = 0; i < _times.size(); i++) {
+                Double elapsedSecs = _times.get(i);
+                double thisForecast = calcForecast(B, P, Q, elapsedSecs);
+                Double thisMeasured = _bearings.get(i);
+                double thisError = Math.pow(thisForecast - thisMeasured, 2);
+                runningSum += thisError;
+            }
+
+            return runningSum;
         }
-        ScatterPlot.ScatterCreate(TimeElapsed, Y_fit);
-        System.out.println(Integer.MAX_VALUE);
+
+        private double calcForecast(double B, double P, double Q,
+                                    Double elapsedSecs) {
+            return Math.toDegrees(Math.atan2(Math.sin(Math.toRadians(B)) + P * elapsedSecs, Math.cos(Math.toRadians(B)) + Q * elapsedSecs));
+        }
 
     }
 
+    static Minimisation optimiseThis(List<Double> times, List<Double> bearings,
+                                     double initialBearing) {
+        // Create instance of Minimisation
+        Minimisation min = new Minimisation();
+
+        // Create instace of class holding function to be minimised
+        FlanaganArctan funct = new FlanaganArctan(times, bearings);
+
+        // initial estimates
+        Double firstBearing = bearings.get(0);
+        double[] start = {1.0, 1.0D, 1.0D};
+
+        // initial step sizes
+        double[] step =
+                {0.03D, 0.03D, 0.03D};
+
+        // convergence tolerance
+        double ftol = 1e-6;
+
+        // Nelder and Mead minimisation procedure
+        //nelderMead((MinimizationFunction) funct, start, step, ftol);
+        min.nelderMead(funct, start, step, ftol);
+
+        return min;
+    }
+
+    private static class FlanaganArctan implements MinimisationFunction {
+        final private List<Double> _times;
+        final private List<Double> _bearings;
+
+        public FlanaganArctan(List<Double> beforeTimes, List<Double> beforeBearings) {
+            _times = beforeTimes;
+            _bearings = beforeBearings;
+        }
+
+        // evaluation function
+        public double function(double[] point) {
+            double B = point[0];
+            double P = point[1];
+            double Q = point[2];
+
+            double runningSum = 0;
+
+            // ok, loop through the data
+            for (int i = 0; i < _times.size(); i++) {
+                double elapsedMillis = _times.get(i) ;
+                double elapsedSecs = elapsedMillis ;
+                double thisForecast = MathematicalComputations.function.value(elapsedSecs, B, P, Q);
+                double thisMeasured = _bearings.get(i);
+                double thisError = Math.pow(thisForecast - thisMeasured, 2);
+                runningSum += thisError;
+            }
+            return runningSum / _times.size();
+        }
+    }
 }
+
 
